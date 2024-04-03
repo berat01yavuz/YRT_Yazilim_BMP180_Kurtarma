@@ -36,7 +36,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "bmp180_for_stm32_hal.h"
-#include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
 /* USER CODE END Includes */

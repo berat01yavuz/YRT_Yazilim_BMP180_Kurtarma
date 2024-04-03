@@ -1,4 +1,21 @@
-// UART'a altitude ve pressure değerleri 0.5 saniye aralıklarla iletiliyor
+/* USER CODE BEGIN Header */
+/**
+ ******************************************************************************
+ * File Name          : freertos.c
+ * Description        : Code for freertos applications
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2024 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "FreeRTOS.h"
@@ -20,16 +37,15 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-int32_t pressure ;
-			 float  r, c;
-				  float altitude_m;
-	char buffer[1000];
+int32_t pressure;
+float r, c;
+float altitude_m;
+char buffer[100];
 
-    char depo[100];
-  int anlikdeger = 0; 
-  int maksdeger = 0; 
-  int a = 0;
-  int mindeger = 0;
+int anlikdeger = 0;
+int maksdeger = 0;
+int a = 0;
+int mindeger = 0;
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -45,7 +61,7 @@ int32_t pressure ;
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_size = 128 * 4,
+  .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityBelowNormal,
 };
 /* Definitions for myTask02 */
@@ -111,63 +127,67 @@ void MX_FREERTOS_Init(void) {
 
 /* USER CODE BEGIN Header_bmp180_data */
 /**
-  * @brief  Function implementing the defaultTask thread.
-  * @param  argument: Not used
-  * @retval None
-  */
+ * @brief  Function implementing the defaultTask thread.
+ * @param  argument: Not used
+ * @retval None
+ */
 /* USER CODE END Header_bmp180_data */
 void bmp180_data(void *argument)
 {
   /* USER CODE BEGIN bmp180_data */
- 
 
   /* Infinite loop */
-  for(;;)
+  for (;;)
   {
-		pressure = BMP180_GetPressure();
-		  r = pressure / 101325.0;
-		  c = 1.0 / 5.255;
-			altitude_m = (1 - pow(r, c)) * 44330.77;
+    pressure = BMP180_GetPressure();
+    r = pressure / 101325.0;
+    c = 1.0 / 5.255;
+    altitude_m = (1 - pow(r, c)) * 44330.77;
 
-			 sprintf(buffer, "Pressure: %d Pa\nAltitude: %f\n", (int) pressure, (float)altitude_m);
+    sprintf(buffer, "Pressure: %d Pa\nAltitude: %f\n", (int)pressure, (float)altitude_m);
+    HAL_UART_Transmit(&huart2, buffer, strlen(buffer), 100);
 
+    anlikdeger = altitude_m;
 
-			 HAL_UART_Transmit(&huart2, buffer, strlen(buffer), 100);
-
-       anlikdeger = altitude_m ;
-if(maksdeger<anlikdeger){
-  maksdeger = anlikdeger;
-
-}
+    if (maksdeger < anlikdeger)
+    {
+      maksdeger = anlikdeger;
+    }
 
     osDelay(500);
   }
+
   /* USER CODE END bmp180_data */
 }
 
 /* USER CODE BEGIN Header_kurtarma */
+
 /**
-* @brief Function implementing the myTask02 thread.
-* @param argument: Not used
-* @retval None
-*/
+ * @brief Function implementing the myTask02 thread.
+ * @param argument: Not used
+ * @retval None
+ */
 /* USER CODE END Header_kurtarma */
 void kurtarma(void *argument)
 {
   /* USER CODE BEGIN kurtarma */
-
+  osDelay(1000);
 
   /* Infinite loop */
-  for(;;)
+  for (;;)
   {
-	  if(maksdeger - anlikdeger > 1){
-	     HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 1);
-       a ++;
-	    }
-      if(a=1 && anlikdeger<=41)
-      HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 0);
+    if ((maksdeger - anlikdeger) > 1)
+    {
+      HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 1);
+      a++;
+
+    }
+    if(a=1 && anlikdeger<=30){
+                 HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 0);
+              }
     osDelay(10);
   }
+
   /* USER CODE END kurtarma */
 }
 
