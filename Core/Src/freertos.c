@@ -1,4 +1,4 @@
-
+// UART'a altitude ve pressure değerleri 0.5 saniye aralıklarla iletiliyor
 
 /* Includes ------------------------------------------------------------------*/
 #include "FreeRTOS.h"
