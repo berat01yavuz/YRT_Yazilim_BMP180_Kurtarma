@@ -28,6 +28,8 @@ int32_t pressure ;
     char depo[100];
   int anlikdeger = 0; 
   int maksdeger = 0; 
+  int a = 0;
+  int mindeger = 0;
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -117,12 +119,11 @@ void MX_FREERTOS_Init(void) {
 void bmp180_data(void *argument)
 {
   /* USER CODE BEGIN bmp180_data */
-
+ 
 
   /* Infinite loop */
   for(;;)
   {
-
 		pressure = BMP180_GetPressure();
 		  r = pressure / 101325.0;
 		  c = 1.0 / 5.255;
@@ -161,7 +162,10 @@ void kurtarma(void *argument)
   {
 	  if(maksdeger - anlikdeger > 1){
 	     HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+       a ++;
 	    }
+      if(a=1 && anlikdeger<=500)
+      HAL_GPIO_TogglePin(GPIOA, PİN LD3);
     osDelay(10);
   }
   /* USER CODE END kurtarma */
