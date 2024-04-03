@@ -161,11 +161,11 @@ void kurtarma(void *argument)
   for(;;)
   {
 	  if(maksdeger - anlikdeger > 1){
-	     HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	     HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 1);
        a ++;
 	    }
-      if(a=1 && anlikdeger<=500)
-      HAL_GPIO_TogglePin(GPIOA, PİN LD3);
+      if(a=1 && anlikdeger<=41)
+      HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 0);
     osDelay(10);
   }
   /* USER CODE END kurtarma */
