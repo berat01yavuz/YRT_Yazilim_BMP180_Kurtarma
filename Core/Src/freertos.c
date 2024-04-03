@@ -26,6 +26,8 @@ int32_t pressure ;
 	char buffer[1000];
 
     char depo[100];
+  int anlikdeger = 0; 
+  int maksdeger = 0; 
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -131,8 +133,11 @@ void bmp180_data(void *argument)
 
 			 HAL_UART_Transmit(&huart2, buffer, strlen(buffer), 100);
 
+       anlikdeger = altitude_m ;
+if(maksdeger<anlikdeger){
+  maksdeger = anlikdeger;
 
-
+}
 
     osDelay(500);
   }
@@ -149,12 +154,15 @@ void bmp180_data(void *argument)
 void kurtarma(void *argument)
 {
   /* USER CODE BEGIN kurtarma */
+
+
   /* Infinite loop */
   for(;;)
   {
-
-
-    osDelay(1);
+	  if(maksdeger - anlikdeger > 1){
+	     HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	    }
+    osDelay(10);
   }
   /* USER CODE END kurtarma */
 }
